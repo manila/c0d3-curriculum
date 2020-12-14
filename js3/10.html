@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+	<html>
+		<meta charset="utf-8">
+		<title>Pokémon</title>
+	<head>
+		<style>
+			li {
+				list-style: none;
+			}
+			ul {
+				padding: 0px;
+			}
+		</style>
+	</head>
+	<body>
+		<form>
+			<button type="button" name="butt-prev">previous</button>
+			<button type="button" name="butt-next">next</button>
+
+		</form>
+		<ul>
+		</ul>
+		<script>
+			const pokemonList = document.getElementsByTagName("ul")[0];
+			const buttonPrev = document.getElementsByName("butt-prev")[0];
+			const buttonNext = document.getElementsByName("butt-next")[0];
+
+			buttonPrev.onclick = (e) => {
+				fetch(e.target.value)
+					.then(res => res.json())
+					.then(render)
+					.catch(e => console.log(e))
+			}
+
+			buttonNext.onclick = (e) => {
+				fetch(e.target.value)
+					.then(res => res.json())
+					.then(render)
+					.catch(e => console.log(e))
+			}
+	
+			const pokemonElem = (name, src) => {
+				return `<li><h1>${name}</h1><img src="${src}"></li>`
+			}
+
+			const render = (data) => {
+				buttonPrev.value = data.previous
+				buttonNext.value = data.next
+
+				pokemonList.innerHTML = ""
+
+				data.results.forEach((res) => fetch(res.url)
+						.then(res => res.json())
+						.then(res => {
+							return pokemonElem(res.name,
+								    res.sprites.front_default)
+						})
+						.then(p => pokemonList.innerHTML += p))
+			}
+				
+			fetch("https://pokeapi.co/api/v2/pokemon/")
+				.then(res => res.json())
+				.then(render)
+				.catch(e => console.log(e))
+
+		</script>
+	</body>
+</html>
