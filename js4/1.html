@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .watch-container {
+                background-image: url('https://www.c0d3.com/challenges/assets/watch.jpg');
+                width: 650px;
+                height: 800px;
+                position: absolute;
+                bottom: 0px;
+                left: 0px;
+            }
+            .watch-bezel {
+                width: 375px;
+                height: 375px;
+                border-radius: 50%;
+                overflow: hidden;
+                position: absolute;
+                left: 133px;
+                top: 209px;
+            }
+            .watch-map {
+                margin: -100px 0px 0px -200px;
+            }
+            .watch-face {
+                text-align: center;
+                width: 375px;
+                height: 375px;
+                position: absolute;
+                top: 50%;
+                left: 0px;
+                background: #FFF;
+                transition: 0.5s linear;
+            }
+            .watch-time {
+                margin-top: 30px;
+                font-size: 5em;
+            }
+            label.watch-face {
+                cursor: pointer;
+                background: rgba(0,0,0,0);
+            }
+            #toggle {
+                display: none;
+            }
+            #toggle:checked ~ .watch-face {
+                top: 0%;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="watch-container">
+            <div class="watch-bezel">
+                <iframe class="watch-map" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d10500.902039411147!2d2.2913514907612305!3d48.85391001859118!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e6701f7e8337b5%3A0xa2cb58dd28914524!2sEiffel%20Tower%2C%20Paris%2C%20France!5e0!3m2!1sen!2sus!4v1608002353629!5m2!1sen!2sus" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                <input type="checkbox" name="toggle" id="toggle">
+                <div class="watch-face">
+                    <h1 class="watch-time">00:00</h1>
+                    <hr>
+                    <h2 class="watch-day">Monday</h2>
+                    <h2 class="watch-date">January 1, 2020</h2>
+                </div>
+                <label class="watch-face" for="toggle"></label>
+            </div>
+        </div>
+	<script>
+		const timeElem = document.querySelector(".watch-time")
+		const dayElem = document.querySelector(".watch-day")
+		const dateElem = document.querySelector(".watch-date")
+
+		const setDateTime = () => {
+			const d = new Date();
+			const month = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"][d.getMonth()]; // Get Month
+			
+			dayElem.innerHTML = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][d.getDay()]; // Get Day
+			dateElem.innerHTML = `${month} ${d.getDate()}, ${d.getFullYear()}`
+			timeElem.innerHTML = `${d.getHours() % 12}:${d.getMinutes()}`
+
+			requestAnimationFrame(setDateTime)
+		}
+
+		setDateTime();	
+	</script>
+    </body>
+</html>
