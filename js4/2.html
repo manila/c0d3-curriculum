@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<script src="https://kit.fontawesome.com/67f703b4e4.js" crossorigin="anonymous"></script>
+		<style>
+			i:hover {
+				cursor: pointer;
+			}
+			.fa-star {
+				-webkit-text-stroke: 3px black;
+				text-stroke: 3px black;
+				font-size: 30px;
+				display: inline;
+				font-weight: 900;
+				color: white;
+				display: block;
+				float: left;
+			}
+			.fas {
+				-webkit-text-stroke: 3px black;
+				text-stroke: 3px black;
+				color: yellow;
+				font-weight: 900;
+			}
+			.stars {
+				display: inline-block;
+				margin: 0px;
+			}
+		</style>
+	</head>
+	<body>
+		<p class="stars">
+			<i class="far fa-star"></i>
+			<i class="far fa-star"></i>
+			<i class="far fa-star"></i>
+			<i class="far fa-star"></i>
+			<i class="far fa-star"></i>
+		</p>
+		<p class="rating-text">
+			You are giving 0 Stars!
+		</p>
+		<script type="text/javascript">
+			let allowHover = true;
+			const stars = document.querySelector(".stars")
+			const starsArr = Array.from(stars.children)
+			const ratingText = document.querySelector(".rating-text")
+
+			const rate = (targetStar) => {
+				let [prevStar, nextStar] = [targetStar, targetStar]
+
+				do {
+					nextStar.classList.replace("fas", "far")
+				} while ((nextStar = nextStar.nextElementSibling)) 
+
+				do {
+					prevStar.classList.replace("far", "fas")
+				} while ((prevStar = prevStar.previousElementSibling))
+			
+				return starsArr.indexOf(targetStar) + 1
+			}
+
+			const setup = () => {
+				stars.addEventListener("mouseenter", (e) => {
+					const { target } = e
+
+					if (allowHover) {
+						ratingText.innerHTML = `You are giving ${rate(target)} Stars!`	
+					}
+
+				}, true)
+
+				stars.addEventListener("click", (e) => {
+					const { target } = e;
+
+					allowHover = false;
+
+					ratingText.innerHTML = `You have given ${rate(target)} Stars!`	
+
+				}, false)
+
+				stars.addEventListener("mouseleave", (e) => {
+
+					allowHover = true;
+
+				}, false)
+			}
+
+			setup()	
+			
+		</script>
+	</body>
+</html>
