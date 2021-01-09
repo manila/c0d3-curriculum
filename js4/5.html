@@ -170,14 +170,13 @@
 					this.board = board
 					this.content = content
 					this.element = document.createElement("div")
-
 					this.element.classList.add("task-container")
 				}
 
 				setup () {
 					const { element, board, content } = this
 
-					this.element.innerHTML = (
+					element.innerHTML = (
 							`<div class='left'>${ board.index > 0 ? '<' : ''}</div>
 						  	 <div class='center'>${this.content}</div>
 		   					 <div class='right'>${ board.index < 3 ? '>' : '' }</div>`
@@ -245,8 +244,6 @@
 			}
 
 			const setup = () => {
-				boards = []
-				kanbanContainer.innerHTML = ''
 				storedData.forEach((b, index) => {
 					boards.push(new Board(
 							b.header,
