@@ -201,10 +201,11 @@
 					}
 
 					element.querySelector(".center").onclick = () => {
-						undoActions.push(() => {
-							board.createTask(content, board.tasks.length)
-						})
-						this.delete(false)
+						if (this.delete(false)) {
+							undoActions.push(() => {
+								board.createTask(content, board.tasks.length)
+							})
+						}
 					}
 				}
 
@@ -224,13 +225,16 @@
 				}
 
 				delete (force) {
+					let deleted = false;
 					const { board } = this
 
 					if (force || confirm(`Are you sure you want to remove ${this.content}?`)) {
 					    board.tasks.splice(this.index, 1)
 						board.render()
 						save()
+						deleted = true
 					}
+					return (deleted)
 				}
 			}
 
