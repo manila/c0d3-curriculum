@@ -57,8 +57,8 @@ const drawSelection = (x1, y1, x2, y2) => {
 }
 
 document.onmousedown = (event) => {
-	selection.x1 = event.offsetX
-	selection.y1 = event.offsetY
+	selection.x1 = event.clientX
+	selection.y1 = event.clientY
 
 	cells.forEach((cell) => cell.unselect())
 	
@@ -71,8 +71,8 @@ document.onmouseup = () => {
 }
 
 document.onmousemove = (event) => {
-	selection.x2 = event.offsetX
-	selection.y2 = event.offsetY
+	selection.x2 = event.clientX
+	selection.y2 = event.clientY
 
 	const { x1, y1, x2, y2 } = selection
 
