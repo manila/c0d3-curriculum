@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+		.minefield {
+			display: grid;
+			grid-gap: 0px;
+			grid-template-rows: repeat(10, 50px);
+			grid-template-columns: repeat(10, 50px);
+		}
+		.cell {
+			font-family: sans-serif;
+			text-align: center;
+			line-height: 50px;
+			border: 1px solid #000;
+			background: #eee;
+			cursor: pointer;
+		}
+		.revealed {
+			background: #aaa;
+			cursor: default;
+		}
+		.flag {
+			background: #F00;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="minefield"></div>
+		<script src="mine.js"></script>
+	</body>
+</html>
