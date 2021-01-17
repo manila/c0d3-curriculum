@@ -1,93 +1,87 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8" />
+		<meta charset="utf-8">
 		<script src="https://kit.fontawesome.com/67f703b4e4.js" crossorigin="anonymous"></script>
 		<style>
-			i:hover {
-				cursor: pointer;
-			}
 			.fa-star {
 				-webkit-text-stroke: 3px black;
 				text-stroke: 3px black;
 				font-size: 30px;
-				display: inline;
 				font-weight: 900;
 				color: white;
-				display: block;
-				float: left;
+				cursor: pointer;
 			}
 			.fas {
 				-webkit-text-stroke: 3px black;
 				text-stroke: 3px black;
-				color: yellow;
 				font-weight: 900;
-			}
-			.stars {
-				display: inline-block;
-				margin: 0px;
+				color: yellow;
 			}
 		</style>
 	</head>
 	<body>
-		<p class="stars">
-			<i class="far fa-star"></i>
-			<i class="far fa-star"></i>
-			<i class="far fa-star"></i>
-			<i class="far fa-star"></i>
-			<i class="far fa-star"></i>
-		</p>
-		<p class="rating-text">
-			You are giving 0 Stars!
-		</p>
+		<p class="stars-container"></p>
+		<p class="rating-text"></p>
 		<script type="text/javascript">
-			let allowHover = true;
-			const stars = document.querySelector(".stars")
-			const starsArr = Array.from(stars.children)
+
+			let starClicked = false
+			const stars = []
+			const starsContainer = document.querySelector(".stars-container")
 			const ratingText = document.querySelector(".rating-text")
 
-			const rate = (targetStar) => {
-				let [prevStar, nextStar] = [targetStar, targetStar]
+			const Star = function (index) {
+				this.index = index
+				this.selected = false
+				this.element = document.createElement("i")
 
-				do {
-					nextStar.classList.replace("fas", "far")
-				} while ((nextStar = nextStar.nextElementSibling)) 
+				this.element.classList.add("far", "fa-star")
 
-				do {
-					prevStar.classList.replace("far", "fas")
-				} while ((prevStar = prevStar.previousElementSibling))
-			
-				return starsArr.indexOf(targetStar) + 1
+				this.element.onclick = () => {
+					starClicked = true
+					selectStars(this.index)
+					ratingText.innerHTML = `You have given ${this.index + 1} Stars!`
+				}
+
+				this.element.onmouseover = () => {
+					!starClicked && selectStars(this.index)
+				}
+
+				this.toggle = () => {
+					this.selected ? this.select() : this.unselect()
+				}
+
+				this.select = () => {
+					this.element.classList.replace("far", "fas")
+				}
+
+				this.unselect = () => {
+					this.element.classList.replace("fas", "far")
+				}
+			}
+
+			starsContainer.onmouseleave = () => {
+				starClicked = false
+			}
+
+			const selectStars = (index) => {
+				ratingText.innerHTML = `You are giving ${index + 1} Stars!`
+				stars.forEach((star) => {
+					star.index <= index ? star.select() : star.unselect()
+				})
 			}
 
 			const setup = () => {
-				stars.addEventListener("mouseenter", (e) => {
-					const { target } = e
+				for (let i = 0; i < 5; i++) {
+					const star = new Star(i)
+					
+					stars.push(star)
 
-					if (allowHover) {
-						ratingText.innerHTML = `You are giving ${rate(target)} Stars!`	
-					}
-
-				}, true)
-
-				stars.addEventListener("click", (e) => {
-					const { target } = e;
-
-					allowHover = false;
-
-					ratingText.innerHTML = `You have given ${rate(target)} Stars!`	
-
-				}, false)
-
-				stars.addEventListener("mouseleave", (e) => {
-
-					allowHover = true;
-
-				}, false)
+					starsContainer.appendChild(star.element)	
+				}
 			}
 
-			setup()	
-			
+			setup()
 		</script>
 	</body>
 </html>
