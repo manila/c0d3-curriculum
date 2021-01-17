@@ -32,7 +32,6 @@
 
 			const Star = function (index) {
 				this.index = index
-				this.selected = false
 				this.element = document.createElement("i")
 
 				this.element.classList.add("far", "fa-star")
@@ -45,10 +44,6 @@
 
 				this.element.onmouseover = () => {
 					!starClicked && selectStars(this.index)
-				}
-
-				this.toggle = () => {
-					this.selected ? this.select() : this.unselect()
 				}
 
 				this.select = () => {
@@ -76,7 +71,6 @@
 					const star = new Star(i)
 					
 					stars.push(star)
-
 					starsContainer.appendChild(star.element)	
 				}
 			}
