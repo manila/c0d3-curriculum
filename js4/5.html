@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+		.purple {
+			background: #35235d;
+		}
+		.orange {
+			background: #CB2402;
+		}
+		.blue {
+			background: #4C49A2;
+		}
+		.magenta {
+			background: #A31A48;
+		}
+		.kanban-container {
+			display: flex;
+			align-content: stretch;
+			margin: 15px;
+		}
+		.column-container {
+			width: 25%;
+			padding: 15px;
+		}
+		.column-header {
+			text-align: center;
+			color: #FFF;
+			padding: 10px;
+		}
+		.column-input {
+			display: flex;
+		}
+		.column-input textarea {
+			width: 75%;
+		}
+		.column-input button {
+			width: 25%;
+			overflow: hidden;
+		}
+		.column-tasks {
+			display: flex;
+			flex-direction: column;
+		}
+		.task-container {
+			margin: 0px 0px 5px 0px;
+			background: #eee;
+		}
+		.task-container:last-child {
+			margin: 0px;
+		}
+		.task-container {
+			display: flex;
+			justify-content: space-between;
+		}
+		.left, .right {
+			padding: 10px;
+			cursor: pointer;
+		}
+		.center {
+			padding: 10px 0px;
+			flex-grow: 6;
+			cursor: pointer;
+		}
+		.undo {
+			position: absolute;
+			bottom: 0px;
+			right: 0px;
+			padding: 20px;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="kanban-container"></div>
+		<button class="undo">Undo</button>
+		<script type="text/javascript">
+			const kanbanContainer = document.querySelector(".kanban-container")
+
+			let boards = []
+            let undoActions = []
+			let storedData = localStorage.getItem('kanban') ? JSON.parse(window.localStorage.kanban) : [
+					{ header: "To-Do", color: "purple", tasks: [], index: 0 },
+					{ header: "Doing", color: "orange", tasks: [], index: 1 },
+					{ header: "Done", color: "blue", tasks: [], index: 2 },
+					{ header: "Approved", color: "magenta", tasks: [], index: 3 }
+				]
+
+			document.querySelector(".undo").addEventListener("click", () => {
+			    if (undoActions.length > 0) {
+					undoActions.pop()()
+					save()
+				}
+			}, false)
+
+			class Board {
+				constructor(header, color, tasks, index) {
+					kanbanContainer.insertAdjacentHTML(
+						"beforeend", 
+						`<div class="column-container" id="${header}">
+							<div class="column-header ${color}">${header}</div>
+							<div class="column-tasks"></div>
+							<div class="column-input">
+								<textarea></textarea>
+								<button type="button">Submit</button>
+							</div>
+						</div>`
+					)
+
+					this.tasks = []
+					this.board = document.querySelector(`#${header}`)
+					this.taskContainer = this.board.querySelector('.column-tasks')
+
+					tasks.forEach((task, index) => {
+						this.createTask(task, index)
+					})
+
+					this.index = index
+					this.header = header
+
+					const button = this.board.querySelector('button')
+					const input = this.board.querySelector('textarea')
+
+					button.onclick = () => {
+						if (input.value) {
+							const task = this.createTask(input.value)
+
+							undoActions.push(() => {
+								task.delete(true)
+							})
+
+							input.value = ''
+							this.render()
+                            save()
+						}
+					}
+
+					this.render()
+				}
+
+				createTask(content) {
+					const task = new Task(content, this, this.tasks.length)
+
+					task.setup()
+
+					this.tasks.push(task)
+					this.render()
+					save()
+                    return task
+				}
+
+				render() {
+					this.taskContainer.innerHTML = ''
+
+					this.tasks.forEach((task, index) => {
+						task.index = index
+						task.setup()
+						this.taskContainer.appendChild(task.element)
+					})
+				}
+
+				save() {
+					storedData[this.index].tasks = this.tasks.map((t) => t.content)
+				}
+			}
+
+			class Task {
+				constructor(content, board, index) {
+					this.index = index
+					this.board = board
+					this.content = content
+					this.element = document.createElement("div")
+					this.element.classList.add("task-container")
+				}
+
+				setup () {
+					const { element, board, content } = this
+
+					element.innerHTML = (
+							`<div class='left'>${ board.index > 0 ? '<' : ''}</div>
+						  	 <div class='center'>${this.content}</div>
+		   					 <div class='right'>${ board.index < 3 ? '>' : '' }</div>`
+					)
+
+					element.querySelector(".left").onclick = () => {
+						if (board.index > 0) {
+							undoActions.push(() => {
+								this.move(board)
+							})
+							this.move(boards[board.index - 1])
+						}
+					}
+
+					element.querySelector(".right").onclick = () => {
+						if (board.index < 3) {
+							undoActions.push(() => {
+								this.move(board)
+							})
+							this.move(boards[board.index + 1])
+						}
+					}
+
+					element.querySelector(".center").onclick = () => {
+						if (this.delete(false)) {
+							undoActions.push(() => {
+								board.createTask(content, board.tasks.length)
+							})
+						}
+					}
+				}
+
+				move (newBoard) {
+				    const oldBoard = this.board
+
+                    this.delete(true)
+
+                    newBoard.tasks.push(this)
+
+					this.board = newBoard
+					this.setup()
+
+					newBoard.render()
+					oldBoard.render()
+					save()
+				}
+
+				delete (force) {
+					let deleted = false;
+					const { board } = this
+
+					if (force || confirm(`Are you sure you want to remove ${this.content}?`)) {
+					    board.tasks.splice(this.index, 1)
+						board.render()
+						save()
+						deleted = true
+					}
+					return (deleted)
+				}
+			}
+
+			const render = () => {
+				boards.forEach(b => b.render())
+			}
+
+			const save = () => {
+				boards.forEach(b => b.save())
+				localStorage.setItem('kanban', JSON.stringify(storedData))
+			}
+
+			const setup = () => {
+				storedData.forEach((b, index) => {
+					boards.push(new Board(
+							b.header,
+							b.color,
+							b.tasks,
+							index
+					))
+				})
+			}
+
+			setup()
+            render()
+		</script>
+	</body>
+</html>
