@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="https://kit.fontawesome.com/67f703b4e4.js" crossorigin="anonymous"></script>
+		<style>
+			.fa-star {
+				-webkit-text-stroke: 3px black;
+				text-stroke: 3px black;
+				font-size: 30px;
+				font-weight: 900;
+				color: white;
+				cursor: pointer;
+			}
+			.fas {
+				-webkit-text-stroke: 3px black;
+				text-stroke: 3px black;
+				font-weight: 900;
+				color: yellow;
+			}
+		</style>
+	</head>
+	<body>
+		<p class="stars-container"></p>
+		<p class="rating-text"></p>
+		<script type="text/javascript">
+
+			let starClicked = false
+			const stars = []
+			const starsContainer = document.querySelector(".stars-container")
+			const ratingText = document.querySelector(".rating-text")
+
+			const Star = function (index) {
+				this.index = index
+				this.element = document.createElement("i")
+
+				this.element.classList.add("far", "fa-star")
+
+				this.element.onclick = () => {
+					starClicked = true
+					selectStars(this.index)
+					ratingText.innerHTML = `You have given ${this.index + 1} Stars!`
+				}
+
+				this.element.onmouseover = () => {
+					!starClicked && selectStars(this.index)
+				}
+
+				this.select = () => {
+					this.element.classList.replace("far", "fas")
+				}
+
+				this.unselect = () => {
+					this.element.classList.replace("fas", "far")
+				}
+			}
+
+			starsContainer.onmouseleave = () => {
+				starClicked = false
+			}
+
+			const selectStars = (index) => {
+				ratingText.innerHTML = `You are giving ${index + 1} Stars!`
+				stars.forEach((star) => {
+					star.index <= index ? star.select() : star.unselect()
+				})
+			}
+
+			const setup = () => {
+				for (let i = 0; i < 5; i++) {
+					const star = new Star(i)
+					
+					stars.push(star)
+					starsContainer.appendChild(star.element)	
+				}
+			}
+
+			setup()
+		</script>
+	</body>
+</html>
