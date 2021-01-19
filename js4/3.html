@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<style>
+		.small-logo {
+			width: 421px;
+			height: 168px;
+			margin: auto;
+			background-image: url("https://www.c0d3.com/challenges/assets/fair/small.jpg");
+			position: relative;
+			cursor: none;
+		}
+
+		.big-logo {
+			width: 196px;
+			height: 196px;
+			background-image: url("https://www.c0d3.com/challenges/assets/fair/big.jpg");
+			background-repeat: no-repeat;
+			border-radius: 100px;
+			position: absolute;
+			pointer-events: none;
+		}
+
+		.looking-glass {
+			width: 200px;
+			height: 200px;
+			background-image: url("https://www.c0d3.com/challenges/assets/fair/scope.png");
+			pointer-events: none;
+			position: absolute;
+			top: -2px;
+			left: -2px;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="small-logo">
+			<div class="big-logo">
+				<div class="looking-glass"></div>
+			</div>
+		</div>
+		<script>
+			const bigLogo = document.querySelector(".big-logo")
+			const smallLogo = document.querySelector(".small-logo")
+			const lookingGlass = document.querySelector(".looking-glass")
+
+			const glassOffsetX = 100;
+			const glassOffsetY = 100;
+
+			const logoRatio = 3;
+
+			smallLogo.addEventListener("mousemove", (e) => {
+				bigLogo.style.display = "block";
+
+				bigLogo.style.left = `${e.layerX - 100}px`; 
+				bigLogo.style.top = `${e.layerY - 100}px`; 
+				
+				bigLogo.style.backgroundPositionX = `${e.layerX * -logoRatio + glassOffsetX}px` 
+				bigLogo.style.backgroundPositionY = `${e.layerY * -logoRatio + glassOffsetY}px`
+			}, true)
+
+			smallLogo.addEventListener("mouseleave", (e) => {
+				bigLogo.style.display = "none";
+			}, true)
+		</script>
+	</body>
+</html>
