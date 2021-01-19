@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+			.game-area {
+				width: auto;
+				display: grid;
+				grid-gap: 4px;
+				grid-template-rows: repeat(2, 50px);
+				grid-template-columns: repeat(2, 50px);
+			}
+			.cell {
+				border: 1px solid black;
+				background: #aaa;
+			}
+			.selected {
+				background: #afa;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="game-area">
+		</div>
+		<script>
+			let cells = [];
+			let gameSize = 2;
+			let selectedCount = 0;
+
+			const gameArea = document.querySelector(".game-area")
+
+			class Cell {
+				constructor(row, col) {
+					this.row = row;
+					this.col = col;
+					this.selected = false;
+					this.element = document.createElement("div")
+					
+					this.element.classList.add("cell")
+					this.element.onclick = () => this.clicked()
+
+					gameArea.append(this.element)
+				}
+
+				toggle() {
+					if (this.selected) {
+						selectedCount--;
+						this.selected = false;
+						this.element.classList.remove("selected")
+					} else {
+						selectedCount++;
+						this.selected = true;
+						this.element.classList.add("selected")
+					}
+				}
+
+				clicked() {
+					const { row, col } = this
+
+					if (this.selected) {
+						this.toggle()
+						cells[row + 1] && cells[row + 1][col].toggle()
+						cells[row - 1] && cells[row - 1][col].toggle()
+						cells[row][col + 1] && cells[row][col + 1].toggle()
+						cells[row][col - 1] && cells[row][col - 1].toggle()
+						checkWin()
+					}
+				}
+			}
+
+			const createGame = (size) => {
+				cells = [];
+				gameArea.innerHTML = ''
+				gameArea.style.gridTemplateRows = `repeat(${size}, 50px)`
+				gameArea.style.gridTemplateColumns = `repeat(${size}, 50px)`
+
+				for (let i = 0; i < size; i++) {
+					cells.push([])
+					for (let j = 0; j < size; j++) {
+						cells[i].push(new Cell(i, j))
+					}
+				}
+
+				cells[Math.floor(Math.random() * size)][Math.floor(Math.random() * size)].toggle()
+			}
+
+			const checkWin = () => {
+				if (selectedCount == 0) {
+					gameSize = prompt("You won! Play again with different size? 0 to stop playing")
+					if (gameSize > 0) {
+						createGame(gameSize)
+					}
+				}
+			}
+
+			createGame(gameSize)
+		</script>
+	</body>
+</html>
